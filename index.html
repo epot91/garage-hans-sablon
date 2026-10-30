@@ -439,6 +439,63 @@
             *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
         }
 
+    
+        /* RESPONSIVE MOBILE & TABLET */
+        @media (max-width: 768px) {
+            body { display: block; }
+            #dashboard-section { padding: 14px; width: 100%; min-height: 100vh; }
+            header { align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+            .header-brand { gap: 10px; }
+            .header-brand h1 { font-size: 1.05rem; line-height: 1.3; }
+            .header-logo { width: 40px; height: 40px; }
+            header > div:last-child { display: flex; align-items: center; gap: 7px; width: 100%; justify-content: space-between; }
+            .user-badge { margin: 0; font-size: .72rem; }
+            .btn-logout { padding: .55rem .8rem; font-size: .78rem; }
+            .summary-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+            .card { padding: 13px; border-radius: 10px; min-width: 0; }
+            .card h3 { font-size: .72rem; line-height: 1.35; }
+            .card .amount { font-size: clamp(1rem, 4vw, 1.35rem); overflow-wrap: anywhere; }
+            .tabs { display: flex; overflow-x: auto; gap: 7px; padding: 0 0 9px; margin-bottom: 14px; scrollbar-width: thin; }
+            .tab-btn { flex: 0 0 auto; white-space: nowrap; font-size: .78rem; padding: .65rem .8rem; }
+            .main-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+            .panel { padding: 13px; margin-bottom: 12px; }
+            .panel h2 { font-size: .95rem; margin-bottom: 1rem; }
+            .row-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+            input, select, textarea { max-width: 100%; font-size: 16px; }
+            .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            table { min-width: 720px; }
+            .tab-content { min-width: 0; }
+            #login-section { width: calc(100% - 28px); max-width: 420px; padding: 1.5rem; margin: 24px auto; }
+            .chart-grid { grid-template-columns: 1fr !important; }
+            .compare-cards { grid-template-columns: 1fr 1fr !important; }
+            .chart-bar-wrap { min-height: 170px; }
+        }
+        @media (max-width: 380px) {
+            #dashboard-section { padding: 10px; }
+            .summary-cards { grid-template-columns: 1fr 1fr; }
+            .card { padding: 10px; }
+            .card .amount { font-size: .95rem; }
+            .header-brand h1 { font-size: .92rem; }
+            .tab-btn { font-size: .72rem; padding: .6rem .7rem; }
+        }
+        .chart-panel { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 18px; }
+        .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+        .chart-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; min-width: 0; }
+        .chart-box h3 { color: var(--accent-gold); font-size: .95rem; margin-bottom: 14px; }
+        .compare-cards { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-bottom: 16px; }
+        .compare-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 14px; border-radius: 10px; min-width: 0; }
+        .compare-card small { color: var(--text-muted); display:block; margin-bottom:6px; }
+        .compare-card strong { font-size: 1rem; overflow-wrap:anywhere; }
+        .chart-bars { display:flex; align-items:flex-end; justify-content:center; gap: clamp(18px, 5vw, 48px); height:190px; padding: 10px 12px 0; border-bottom:1px solid var(--border-color); }
+        .chart-bar-wrap { flex:1; max-width:150px; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:8px; }
+        .chart-bar { width:min(70px,70%); min-height:4px; border-radius:8px 8px 0 0; transition:height .7s ease; box-shadow:0 0 18px rgba(255,170,0,.16); }
+        .chart-bar.previous { background:linear-gradient(180deg,#64748b,#334155); }
+        .chart-bar.current { background:linear-gradient(180deg,#ffcc70,#ff3333); }
+        .chart-bar-label { color:var(--text-muted); font-size:.75rem; text-align:center; }
+        .chart-bar-value { color:var(--text-main); font-size:.75rem; font-weight:600; text-align:center; overflow-wrap:anywhere; }
+        .chart-note { color:var(--text-muted); font-size:.78rem; margin-top:12px; line-height:1.5; }
+        .trend-up { color:var(--success); } .trend-down { color:var(--danger); }
+
     </style>
 </head>
 <body>
@@ -500,6 +557,7 @@
             <button class="tab-btn active" onclick="switchTab('orders-tab', this)"><i class="fa-solid fa-users"></i> Customer & Order</button>
             <button class="tab-btn" onclick="switchTab('size-monitor-tab', this)"><i class="fa-solid fa-ruler-combined"></i> Monitor Ukuran (Size)</button>
             <button class="tab-btn" onclick="switchTab('finance-tab', this)"><i class="fa-solid fa-calendar-day"></i> Keuangan Harian</button>
+            <button class="tab-btn" onclick="switchTab('monthly-chart-tab', this); renderMonthlyComparison();"><i class="fa-solid fa-chart-column"></i> Grafik Bulanan</button>
         </div>
 
         <!-- TAB 1: CUSTOMER & ORDER -->
@@ -668,6 +726,36 @@
             </div>
         </div>
 
+        <!-- TAB 4: PERBANDINGAN BULANAN -->
+        <div id="monthly-chart-tab" class="tab-content">
+            <div class="chart-panel">
+                <h2 style="color:var(--accent-gold);margin-bottom:8px;"><i class="fa-solid fa-chart-line"></i> Perbandingan Bulanan</h2>
+                <p class="chart-note" style="margin-top:0;margin-bottom:16px;">Perbandingan otomatis antara bulan sebelumnya dan bulan yang sedang berjalan, berdasarkan tanggal transaksi dan tanggal masuk order.</p>
+                <div class="compare-cards">
+                    <div class="compare-card"><small>Perubahan Pemasukan</small><strong id="income-change">—</strong></div>
+                    <div class="compare-card"><small>Perubahan Jumlah Order</small><strong id="order-change">—</strong></div>
+                    <div class="compare-card"><small>Periode Dibandingkan</small><strong id="month-period" style="font-size:.85rem;">—</strong></div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-box">
+                        <h3><i class="fa-solid fa-wallet"></i> Pemasukan</h3>
+                        <div class="chart-bars">
+                            <div class="chart-bar-wrap"><div class="chart-bar-value" id="income-prev-value">Rp 0</div><div class="chart-bar previous" id="income-prev-bar"></div><div class="chart-bar-label" id="income-prev-label">Bulan lalu</div></div>
+                            <div class="chart-bar-wrap"><div class="chart-bar-value" id="income-current-value">Rp 0</div><div class="chart-bar current" id="income-current-bar"></div><div class="chart-bar-label" id="income-current-label">Bulan ini</div></div>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <h3><i class="fa-solid fa-shirt"></i> Jumlah Order</h3>
+                        <div class="chart-bars">
+                            <div class="chart-bar-wrap"><div class="chart-bar-value" id="orders-prev-value">0 order</div><div class="chart-bar previous" id="orders-prev-bar"></div><div class="chart-bar-label" id="orders-prev-label">Bulan lalu</div></div>
+                            <div class="chart-bar-wrap"><div class="chart-bar-value" id="orders-current-value">0 order</div><div class="chart-bar current" id="orders-current-bar"></div><div class="chart-bar-label" id="orders-current-label">Bulan ini</div></div>
+                        </div>
+                    </div>
+                </div>
+                <p class="chart-note">Catatan: grafik pemasukan menghitung transaksi bertipe Pemasukan pada halaman Keuangan Harian. Grafik order menghitung order berdasarkan Tanggal Masuk.</p>
+            </div>
+        </div>
+
     </div>
 
     <!-- MODAL RINCIAN / NOTA STRUCT -->
@@ -677,6 +765,7 @@
                 <h2>HANS SCREEN PRINTING</h2>
                 <p>Nota Rincian Pemesanan</p>
             </div>
+
             <div id="receipt-details"></div>
             <button class="btn btn-print" onclick="closeReceipt()"><i class="fa-solid fa-check"></i> Selesai & Tutup</button>
         </div>
@@ -757,6 +846,7 @@
             
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
+            if (tabId === 'monthly-chart-tab') renderMonthlyComparison();
         }
 
         function formatRp(amount) {
@@ -1050,6 +1140,65 @@
             document.getElementById('total-income').innerText = formatRp(totalIn);
             document.getElementById('total-expense').innerText = formatRp(totalOut);
             document.getElementById('total-balance').innerText = formatRp(totalIn - totalOut);
+        }
+
+
+        function monthKey(dateString) {
+            if (!dateString) return '';
+            const parts = String(dateString).split('-');
+            if (parts.length < 2) return '';
+            return parts[0] + '-' + parts[1];
+        }
+
+        function monthLabel(date) {
+            return new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(date);
+        }
+
+        function percentChange(current, previous) {
+            if (previous === 0) return current === 0 ? '0%' : '+100%*';
+            const pct = ((current - previous) / previous) * 100;
+            return (pct > 0 ? '+' : '') + pct.toFixed(1).replace('.', ',') + '%';
+        }
+
+        function setCompareBar(prefix, previous, current, formatter) {
+            const maxValue = Math.max(previous, current, 1);
+            const prevHeight = previous === 0 ? 3 : Math.max(5, (previous / maxValue) * 150);
+            const currentHeight = current === 0 ? 3 : Math.max(5, (current / maxValue) * 150);
+            document.getElementById(prefix + '-prev-bar').style.height = prevHeight + 'px';
+            document.getElementById(prefix + '-current-bar').style.height = currentHeight + 'px';
+            document.getElementById(prefix + '-prev-value').textContent = formatter(previous);
+            document.getElementById(prefix + '-current-value').textContent = formatter(current);
+        }
+
+        function renderMonthlyComparison() {
+            const now = new Date();
+            const currentMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            const previousMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            const currentKey = monthKey(currentMonthDate.getFullYear() + '-' + String(currentMonthDate.getMonth() + 1).padStart(2, '0'));
+            const previousKey = monthKey(previousMonthDate.getFullYear() + '-' + String(previousMonthDate.getMonth() + 1).padStart(2, '0'));
+
+            const currentIncome = finances.filter(f => f.type === 'income' && monthKey(f.date) === currentKey).reduce((sum, f) => sum + (Number(f.amount) || 0), 0);
+            const previousIncome = finances.filter(f => f.type === 'income' && monthKey(f.date) === previousKey).reduce((sum, f) => sum + (Number(f.amount) || 0), 0);
+            const currentOrders = orders.filter(o => monthKey(o.dateIn) === currentKey).length;
+            const previousOrders = orders.filter(o => monthKey(o.dateIn) === previousKey).length;
+
+            const incomePct = percentChange(currentIncome, previousIncome);
+            const orderPct = percentChange(currentOrders, previousOrders);
+            const incomeEl = document.getElementById('income-change');
+            const orderEl = document.getElementById('order-change');
+            incomeEl.textContent = incomePct;
+            orderEl.textContent = orderPct;
+            incomeEl.className = currentIncome >= previousIncome ? 'trend-up' : 'trend-down';
+            orderEl.className = currentOrders >= previousOrders ? 'trend-up' : 'trend-down';
+
+            document.getElementById('month-period').textContent = monthLabel(previousMonthDate) + ' / ' + monthLabel(currentMonthDate);
+            document.getElementById('income-prev-label').textContent = monthLabel(previousMonthDate);
+            document.getElementById('income-current-label').textContent = monthLabel(currentMonthDate);
+            document.getElementById('orders-prev-label').textContent = monthLabel(previousMonthDate);
+            document.getElementById('orders-current-label').textContent = monthLabel(currentMonthDate);
+
+            setCompareBar('income', previousIncome, currentIncome, formatRp);
+            setCompareBar('orders', previousOrders, currentOrders, value => value + ' order');
         }
 
         function renderAll() {
