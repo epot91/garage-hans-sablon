@@ -27,14 +27,15 @@ body {
     align-items: center;
 }
 body {
-    background:
-        linear-gradient(rgba(5, 8, 15, 0.75), rgba(5, 8, 15, 0.85)),
-        url("background-hans.jpg");
+    body.login-screen {
+            background-image:
+                linear-gradient(rgba(0,0,0,.42), rgba(0,0,0,.68)),
+                url("__HANS_LOGIN_BACKGROUND__");
 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
 
     color: var(--text-main);
     min-height: 100vh;
@@ -88,10 +89,9 @@ backdrop-filter: blur(8px);
 
 #login-section p {
     body {
-    background:
-        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.65)),
-        url("background-hans.jpg") center center / cover no-repeat fixed;
-
+    background: rgba(15, 15, 20, 0.78);
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
